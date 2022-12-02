@@ -1,9 +1,9 @@
 {
-  "name": "codemirror-promql",
-  "version": "0.19.0",
+  "name": "@fc-components/codemirror-promql",
+  "version": "0.19.1",
   "description": "a CodeMirror mode for the PromQL language",
-  "main": "src/index.ts",
-  "module": "src/index.ts",
+  "main": "src/cjs/index.js",
+  "module": "dist/esm/index.js",
   "scripts": {
     "build": "npm run build:grammar && npm run build:lib",
     "build:grammar": "npx lezer-generator src/grammar/promql.grammar -o src/grammar/parser",
