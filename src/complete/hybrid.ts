@@ -465,10 +465,12 @@ export function analyzeCompletion(state: EditorState, node: SyntaxNode): Context
 export class HybridComplete implements CompleteStrategy {
   private readonly prometheusClient: PrometheusClient | undefined;
   private readonly maxMetricsMetadata: number;
+  private readonly extraLabelValues: string[];
 
-  constructor(prometheusClient?: PrometheusClient, maxMetricsMetadata = 10000) {
+  constructor(prometheusClient?: PrometheusClient, maxMetricsMetadata = 10000, extraLabelValues: string[] = []) {
     this.prometheusClient = prometheusClient;
     this.maxMetricsMetadata = maxMetricsMetadata;
+    this.extraLabelValues = extraLabelValues;
   }
 
   getPrometheusClient(): PrometheusClient | undefined {
@@ -645,7 +647,8 @@ export class HybridComplete implements CompleteStrategy {
       return result;
     }
     return this.prometheusClient.labelValues(context.labelName, context.metricName, context.matchers).then((labelValues: string[]) => {
-      return result.concat(labelValues.map((value) => ({ label: value, type: 'text' })));
+      const completeLabelValues = this.extraLabelValues.concat(labelValues);
+      return result.concat(completeLabelValues.map((value) => ({ label: value, type: 'text' })));
     });
   }
 }

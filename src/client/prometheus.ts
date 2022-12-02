@@ -156,7 +156,6 @@ export class HTTPPrometheusClient implements PrometheusClient {
         return [];
       });
     }
-
     return this.series(metricName, matchers, labelName).then((series) => {
       const labelValues = new Set<string>();
       for (const labelSet of series) {

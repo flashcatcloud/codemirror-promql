@@ -29,6 +29,8 @@ export interface CompleteConfiguration {
   maxMetricsMetadata?: number;
   // When providing this custom CompleteStrategy, the settings above will not be used.
   completeStrategy?: CompleteStrategy;
+  //
+  extraLabelValues?: string[];
 }
 
 function isPrometheusConfig(remoteConfig: PrometheusConfig | PrometheusClient): remoteConfig is PrometheusConfig {
@@ -52,7 +54,11 @@ export function newCompleteStrategy(conf?: CompleteConfiguration): CompleteStrat
     if (!isPrometheusConfig(conf.remote)) {
       return new HybridComplete(conf.remote, conf.maxMetricsMetadata);
     }
-    return new HybridComplete(new CachedPrometheusClient(new HTTPPrometheusClient(conf.remote), conf.remote.cache), conf.maxMetricsMetadata);
+    return new HybridComplete(
+      new CachedPrometheusClient(new HTTPPrometheusClient(conf.remote), conf.remote.cache),
+      conf.maxMetricsMetadata,
+      conf.extraLabelValues
+    );
   }
   return new HybridComplete();
 }
