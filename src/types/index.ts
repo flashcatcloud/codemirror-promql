@@ -11,6 +11,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export { ValueType, PromQLFunction, getFunction } from './function';
+export { ValueType, getFunction } from './function';
+export type { PromQLFunction } from './function';
 export { Matcher } from './matcher';
-export { VectorMatchCardinality, VectorMatching } from './vector';
+export { VectorMatchCardinality } from './vector';
+export type { VectorMatching } from './vector';

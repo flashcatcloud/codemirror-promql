@@ -11,6 +11,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-export { PrometheusClient, PrometheusConfig, CacheConfig } from './prometheus';
+export type { PrometheusClient, PrometheusConfig, CacheConfig } from './prometheus';
 
 export type FetchFn = (input: RequestInfo, init?: RequestInit) => Promise<Response>;
