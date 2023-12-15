@@ -180,6 +180,7 @@ export function computeStartCompletePosition(node: SyntaxNode, pos: number): num
     (node.type.id === NumberLiteral && node.parent?.type.id === 0 && node.parent.parent?.type.id === SubqueryExpr) ||
     (node.type.id === 0 &&
       (node.parent?.type.id === OffsetExpr ||
+        node.parent?.type.id === VariableSelector ||
         node.parent?.type.id === MatrixSelector ||
         (node.parent?.type.id === SubqueryExpr && containsAtLeastOneChild(node.parent, Duration))))
   ) {

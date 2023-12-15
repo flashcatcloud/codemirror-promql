@@ -27,7 +27,7 @@ describe('autocomplete promQL test', () => {
       pos: 4,
       expectedResult: {
         options: variableTerms,
-        from: 3,
+        from: 4,
         to: 4,
         span: undefined,
       },
