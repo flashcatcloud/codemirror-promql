@@ -41,6 +41,8 @@ import {
   Lss,
   Lte,
   MatchOp,
+  VariableSelector,
+  Variable,
   MatrixSelector,
   MetricIdentifier,
   Mod,
@@ -69,6 +71,7 @@ import {
   binOpModifierTerms,
   binOpTerms,
   durationTerms,
+  variableTerms,
   functionIdentifierTerms,
   matchOpTerms,
   numberTerms,
@@ -80,6 +83,7 @@ import { syntaxTree } from '@codemirror/language';
 const autocompleteNodes: { [key: string]: Completion[] } = {
   matchOp: matchOpTerms,
   binOp: binOpTerms,
+  variable: variableTerms,
   duration: durationTerms,
   binOpModifier: binOpModifierTerms,
   atModifier: atModifierTerms,
@@ -102,6 +106,7 @@ export enum ContextKind {
   BinOp,
   MatchOp,
   AggregateOpModifier,
+  Variable,
   Duration,
   Offset,
   Bool,
@@ -202,6 +207,13 @@ export function analyzeCompletion(state: EditorState, node: SyntaxNode): Context
         // In this case the current token is not itself a valid match op yet:
         //      metric_name{labelName!}
         result.push({ kind: ContextKind.MatchOp });
+        break;
+      }
+      if (node.parent?.type.id === VariableSelector) {
+        // we are likely in the given situation:
+        // `metric_name{}[5]`
+        // We can also just autocomplete a duration
+        result.push({ kind: ContextKind.Variable });
         break;
       }
       if (node.parent?.type.id === MatrixSelector) {
@@ -516,6 +528,12 @@ export class HybridComplete implements CompleteStrategy {
         case ContextKind.AggregateOpModifier:
           asyncResult = asyncResult.then((result) => {
             return result.concat(autocompleteNodes.aggregateOpModifier);
+          });
+          break;
+        case ContextKind.Variable:
+          span = false;
+          asyncResult = asyncResult.then((result) => {
+            return result.concat(autocompleteNodes.variable);
           });
           break;
         case ContextKind.Duration:

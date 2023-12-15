@@ -27,6 +27,7 @@ Expr {
   AggregateExpr |
   BinaryExpr |
   FunctionCall |
+  VariableSelector |
   MatrixSelector |
   NumberLiteral |
   OffsetExpr |
@@ -205,6 +206,10 @@ OffsetExpr {
   Expr Offset Sub? Duration
 }
 
+VariableSelector {
+  Expr "[" Variable "]"
+}
+
 MatrixSelector {
   // TODO: Can this not be more specific than "Expr"?
   Expr "[" Duration "]"
@@ -294,6 +299,12 @@ NumberLiteral  {
     ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" ) ( std.digit+ "ms" )? ) |
     ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" ) )
   }
+  // $__interval
+  // $__rate_interval
+  // $__range
+  Variable {
+    "$" "__" ( "interval" | "rate_interval" | "range" )
+  }
   Identifier { (std.asciiLetter | "_" | ":") (std.asciiLetter | std.digit | "_" | ":" )*}
   LabelName { (std.asciiLetter | "_") (std.asciiLetter | std.digit | "_")* }
 
@@ -313,6 +324,7 @@ NumberLiteral  {
   EqlSingle { "=" }
   NeqRegex { "!~" }
   Pow { "^" }
+  Dollar { "$" }
 
   // Special Modifier
   At { "@" }

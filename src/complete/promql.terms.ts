@@ -14,6 +14,7 @@
 import { Completion, snippet } from '@codemirror/autocomplete';
 
 export const durationTerms = [{ label: 'y' }, { label: 'w' }, { label: 'd' }, { label: 'h' }, { label: 'm' }, { label: 's' }, { label: 'ms' }];
+export const variableTerms = [{ label: '__interval' }, { label: '__rate_interval' }, { label: '__range' }];
 export const matchOpTerms = [{ label: '=' }, { label: '!=' }, { label: '=~' }, { label: '!~' }];
 export const binOpTerms = [
   { label: '^' },
