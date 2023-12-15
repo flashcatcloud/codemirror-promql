@@ -42,7 +42,7 @@ import {
   Lte,
   MatchOp,
   VariableSelector,
-  Variable,
+  Dollar,
   MatrixSelector,
   MetricIdentifier,
   Mod,
@@ -177,10 +177,10 @@ export function computeStartCompletePosition(node: SyntaxNode, pos: number): num
     start++;
   } else if (
     node.type.id === OffsetExpr ||
+    node.type.id === Dollar ||
     (node.type.id === NumberLiteral && node.parent?.type.id === 0 && node.parent.parent?.type.id === SubqueryExpr) ||
     (node.type.id === 0 &&
       (node.parent?.type.id === OffsetExpr ||
-        node.parent?.type.id === VariableSelector ||
         node.parent?.type.id === MatrixSelector ||
         (node.parent?.type.id === SubqueryExpr && containsAtLeastOneChild(node.parent, Duration))))
   ) {
@@ -208,13 +208,6 @@ export function analyzeCompletion(state: EditorState, node: SyntaxNode): Context
         // In this case the current token is not itself a valid match op yet:
         //      metric_name{labelName!}
         result.push({ kind: ContextKind.MatchOp });
-        break;
-      }
-      if (node.parent?.type.id === VariableSelector) {
-        // we are likely in the given situation:
-        // `metric_name{}[5]`
-        // We can also just autocomplete a duration
-        result.push({ kind: ContextKind.Variable });
         break;
       }
       if (node.parent?.type.id === MatrixSelector) {
@@ -433,6 +426,13 @@ export function analyzeCompletion(state: EditorState, node: SyntaxNode): Context
     case Duration:
     case OffsetExpr:
       result.push({ kind: ContextKind.Duration });
+      break;
+    case Dollar:
+      if (node.parent?.type.id === VariableSelector) {
+        // `metric_name{}[$]`
+        result.push({ kind: ContextKind.Variable });
+        break;
+      }
       break;
     case FunctionCallBody:
       // In this case we are in the given situation:

@@ -207,7 +207,7 @@ OffsetExpr {
 }
 
 VariableSelector {
-  Expr "[" Variable "]"
+  Expr "[" Dollar Variable "]"
 }
 
 MatrixSelector {
@@ -303,7 +303,7 @@ NumberLiteral  {
   // $__rate_interval
   // $__range
   Variable {
-    "$" "__" ( "interval" | "rate_interval" | "range" )
+    "__" ( "interval" | "rate_interval" | "range" )
   }
   Identifier { (std.asciiLetter | "_" | ":") (std.asciiLetter | std.digit | "_" | ":" )*}
   LabelName { (std.asciiLetter | "_") (std.asciiLetter | std.digit | "_")* }
