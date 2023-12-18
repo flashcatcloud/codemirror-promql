@@ -192,7 +192,7 @@ export function computeStartCompletePosition(node: SyntaxNode, pos: number): num
 // analyzeCompletion is going to determinate what should be autocompleted.
 // The value of the autocompletion is then calculate by the function buildCompletion.
 // Note: this method is exported for testing purpose only. Do not use it directly.
-export function analyzeCompletion(state: EditorState, node: SyntaxNode): Context[] {
+export function analyzeCompletion(state: EditorState, node: SyntaxNode, rangeVectorCompletion = false): Context[] {
   const result: Context[] = [];
   switch (node.type.id) {
     case 0: // 0 is the id of the error node
@@ -428,7 +428,7 @@ export function analyzeCompletion(state: EditorState, node: SyntaxNode): Context
       result.push({ kind: ContextKind.Duration });
       break;
     case Dollar:
-      if (node.parent?.type.id === VariableSelector) {
+      if (rangeVectorCompletion && node.parent?.type.id === VariableSelector) {
         // `metric_name{}[$]`
         result.push({ kind: ContextKind.Variable });
         break;
@@ -479,11 +479,13 @@ export class HybridComplete implements CompleteStrategy {
   private readonly prometheusClient: PrometheusClient | undefined;
   private readonly maxMetricsMetadata: number;
   private readonly extraLabelValues: string[];
+  private readonly rangeVectorCompletion: boolean;
 
-  constructor(prometheusClient?: PrometheusClient, maxMetricsMetadata = 10000, extraLabelValues: string[] = []) {
+  constructor(prometheusClient?: PrometheusClient, maxMetricsMetadata = 10000, extraLabelValues: string[] = [], rangeVectorCompletion = false) {
     this.prometheusClient = prometheusClient;
     this.maxMetricsMetadata = maxMetricsMetadata;
     this.extraLabelValues = extraLabelValues;
+    this.rangeVectorCompletion = rangeVectorCompletion;
   }
 
   getPrometheusClient(): PrometheusClient | undefined {
@@ -493,7 +495,7 @@ export class HybridComplete implements CompleteStrategy {
   promQL(context: CompletionContext): Promise<CompletionResult | null> | CompletionResult | null {
     const { state, pos } = context;
     const tree = syntaxTree(state).resolve(pos, -1);
-    const contexts = analyzeCompletion(state, tree);
+    const contexts = analyzeCompletion(state, tree, this.rangeVectorCompletion);
     let asyncResult: Promise<Completion[]> = Promise.resolve([]);
     let completeSnippet = false;
     let span = true;

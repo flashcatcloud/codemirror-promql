@@ -29,8 +29,10 @@ export interface CompleteConfiguration {
   maxMetricsMetadata?: number;
   // When providing this custom CompleteStrategy, the settings above will not be used.
   completeStrategy?: CompleteStrategy;
-  //
+  // Extended tag values, such as dashboard variables
   extraLabelValues?: string[];
+  // Whether to enable built-in range vector variables, such as `$__interval`
+  rangeVectorCompletion?: boolean;
 }
 
 function isPrometheusConfig(remoteConfig: PrometheusConfig | PrometheusClient): remoteConfig is PrometheusConfig {
@@ -57,7 +59,8 @@ export function newCompleteStrategy(conf?: CompleteConfiguration): CompleteStrat
     return new HybridComplete(
       new CachedPrometheusClient(new HTTPPrometheusClient(conf.remote), conf.remote.cache),
       conf.maxMetricsMetadata,
-      conf.extraLabelValues
+      conf.extraLabelValues,
+      conf.rangeVectorCompletion
     );
   }
   return new HybridComplete();
