@@ -23,7 +23,7 @@ describe('autocomplete promQL test', () => {
   const testCases = [
     {
       title: 'offline autocomplete variable for a variable selector',
-      expr: 'go[$]',
+      expr: 'go[$__range:$__interval]',
       pos: 4,
       expectedResult: {
         options: variableTerms,

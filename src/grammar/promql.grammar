@@ -27,7 +27,6 @@ Expr {
   AggregateExpr |
   BinaryExpr |
   FunctionCall |
-  VariableSelector |
   MatrixSelector |
   NumberLiteral |
   OffsetExpr |
@@ -206,17 +205,13 @@ OffsetExpr {
   Expr Offset Sub? Duration
 }
 
-VariableSelector {
-  Expr "[" Dollar Variable "]"
-}
-
 MatrixSelector {
   // TODO: Can this not be more specific than "Expr"?
-  Expr "[" Duration "]"
+  Expr "[" (Duration | Dollar Variable) "]"
 }
 
 SubqueryExpr {
-  Expr "[" Duration ":" ("" | Duration) "]"
+  Expr "[" (Duration | Dollar Variable) ":" ("" | Duration | Dollar Variable) "]"
 }
 
 UnaryExpr {

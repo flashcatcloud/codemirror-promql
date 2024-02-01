@@ -41,7 +41,6 @@ import {
   Lss,
   Lte,
   MatchOp,
-  VariableSelector,
   Dollar,
   MatrixSelector,
   MetricIdentifier,
@@ -428,7 +427,7 @@ export function analyzeCompletion(state: EditorState, node: SyntaxNode, rangeVec
       result.push({ kind: ContextKind.Duration });
       break;
     case Dollar:
-      if (rangeVectorCompletion && node.parent?.type.id === VariableSelector) {
+      if (rangeVectorCompletion && (node.parent?.type.id === MatrixSelector || node.parent?.type.id === SubqueryExpr)) {
         // `metric_name{}[$]`
         result.push({ kind: ContextKind.Variable });
         break;

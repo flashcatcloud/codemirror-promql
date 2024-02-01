@@ -747,6 +747,21 @@ describe('promql operations', () => {
       expectedValueType: ValueType.vector,
       expectedDiag: [],
     },
+    {
+      expr: 'topk(5,avg_over_time(cpu_usage_active[$__range_s]))',
+      expectedValueType: ValueType.vector,
+      expectedDiag: [] as Diagnostic[],
+    },
+    {
+      expr: 'rate(cpu_usage_active[$__range_s])',
+      expectedValueType: ValueType.vector,
+      expectedDiag: [] as Diagnostic[],
+    },
+    {
+      expr: 'rate(cpu_usage_active[$__range_s:10m])',
+      expectedValueType: ValueType.vector,
+      expectedDiag: [] as Diagnostic[],
+    },
   ];
   testCases.forEach((value) => {
     const state = createEditorState(value.expr);
