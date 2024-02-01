@@ -1,6 +1,6 @@
 {
   "name": "@fc-components/codemirror-promql",
-  "version": "0.19.8",
+  "version": "0.19.9",
   "description": "a CodeMirror mode for the PromQL language",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
