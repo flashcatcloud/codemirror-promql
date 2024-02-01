@@ -31,6 +31,9 @@ describe('autocomplete promQL test', () => {
         to: 4,
         span: undefined,
       },
+      conf: {
+        rangeVectorCompletion: true,
+      },
     },
   ];
   testCases.forEach((value) => {

@@ -63,5 +63,5 @@ export function newCompleteStrategy(conf?: CompleteConfiguration): CompleteStrat
       conf.rangeVectorCompletion
     );
   }
-  return new HybridComplete();
+  return new HybridComplete(undefined, conf?.maxMetricsMetadata, conf?.extraLabelValues, conf?.rangeVectorCompletion);
 }
