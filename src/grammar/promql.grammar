@@ -299,11 +299,8 @@ NumberLiteral  {
     ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" ) ( std.digit+ "ms" )? ) |
     ( ( std.digit+ "y" )? ( std.digit+ "w" )? ( std.digit+ "d" )? ( std.digit+ "h" )? ( std.digit+ "m" )? ( std.digit+ "s" )? ( std.digit+ "ms" ) )
   }
-  // $__interval
-  // $__rate_interval
-  // $__range
   Variable {
-    "__" ( "interval" | "rate_interval" | "range" )
+    "__" ( "from" | "from_date_seconds" | "from_date_iso" | "from_date" | "to" | "to_date_seconds" | "to_date_iso" | "to_date" | "interval" | "interval_ms" | "rate_interval" | "range" | "range_s" | "range_ms" )
   }
   Identifier { (std.asciiLetter | "_" | ":") (std.asciiLetter | std.digit | "_" | ":" )*}
   LabelName { (std.asciiLetter | "_") (std.asciiLetter | std.digit | "_")* }

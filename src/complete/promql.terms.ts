@@ -14,7 +14,22 @@
 import { Completion, snippet } from '@codemirror/autocomplete';
 
 export const durationTerms = [{ label: 'y' }, { label: 'w' }, { label: 'd' }, { label: 'h' }, { label: 'm' }, { label: 's' }, { label: 'ms' }];
-export const variableTerms = [{ label: '__interval' }, { label: '__rate_interval' }, { label: '__range' }];
+export const variableTerms = [
+  { label: '__from' },
+  { label: '__from_date_seconds' },
+  { label: '__from_date_iso' },
+  { label: '__from_date' },
+  { label: '__to' },
+  { label: '__to_date_seconds' },
+  { label: '__to_date_iso' },
+  { label: '__to_date' },
+  { label: '__interval' },
+  { label: '__interval_ms' },
+  { label: '__rate_interval' },
+  { label: '__range' },
+  { label: '__range_s' },
+  { label: '__range_ms' },
+];
 export const matchOpTerms = [{ label: '=' }, { label: '!=' }, { label: '=~' }, { label: '!~' }];
 export const binOpTerms = [
   { label: '^' },
