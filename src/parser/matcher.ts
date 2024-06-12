@@ -84,5 +84,8 @@ export function labelMatchersToString(metricName: string, matchers?: Matcher[], 
       matchersAsString = `${matchersAsString},${m}`;
     }
   }
+  if (metricName === '' && matchersAsString === '') {
+    return '';
+  }
   return `${metricName}{${matchersAsString}}`;
 }

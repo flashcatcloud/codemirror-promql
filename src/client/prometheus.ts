@@ -108,8 +108,9 @@ export class HTTPPrometheusClient implements PrometheusClient {
         start: start.toISOString(),
         end: end.toISOString(),
       };
-      if (matchers && matchers.length > 0) {
-        paramsInit['match[]'] = labelMatchersToString('', matchers);
+      const matchString = labelMatchersToString('', matchers);
+      if (matchString) {
+        paramsInit['match[]'] = matchString;
       }
       const request = this.buildRequest(this.labelsEndpoint(), new URLSearchParams(paramsInit));
       // See https://prometheus.io/docs/prometheus/latest/querying/api/#getting-label-names
@@ -149,8 +150,9 @@ export class HTTPPrometheusClient implements PrometheusClient {
         start: start.toISOString(),
         end: end.toISOString(),
       };
-      if (matchers && matchers.length > 0) {
-        paramsInit['match[]'] = labelMatchersToString('', matchers, labelName);
+      const matchString = labelMatchersToString('', matchers, labelName);
+      if (matchString) {
+        paramsInit['match[]'] = matchString;
       }
       const params: URLSearchParams = new URLSearchParams(paramsInit);
       // See https://prometheus.io/docs/prometheus/latest/querying/api/#querying-label-values
