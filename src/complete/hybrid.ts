@@ -367,7 +367,11 @@ export function analyzeCompletion(state: EditorState, node: SyntaxNode, rangeVec
       // In that case we are in the given situation:
       //       metric_name{} or {}
       // so we have or to autocomplete any kind of labelName or to autocomplete only the labelName associated to the metric
-      result.push({ kind: ContextKind.LabelName, metricName: getMetricNameInVectorSelector(node, state) });
+      // then find the metricName if it exists
+      const metricName = getMetricNameInVectorSelector(node, state);
+      // finally get the full matcher available
+      const labelMatchers = buildLabelMatchers(retrieveAllRecursiveNodes(node, LabelMatchList, LabelMatcher), state);
+      result.push({ kind: ContextKind.LabelName, metricName: metricName, matchers: labelMatchers });
       break;
     case LabelName:
       if (node.parent?.type.id === GroupingLabel) {
@@ -657,7 +661,7 @@ export class HybridComplete implements CompleteStrategy {
     if (!this.prometheusClient) {
       return result;
     }
-    return this.prometheusClient.labelNames(context.metricName).then((labelNames: string[]) => {
+    return this.prometheusClient.labelNames(context.metricName, context.matchers).then((labelNames: string[]) => {
       return result.concat(labelNames.map((value) => ({ label: value, type: 'constant' })));
     });
   }

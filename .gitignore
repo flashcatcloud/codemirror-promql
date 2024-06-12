@@ -9,3 +9,4 @@ src/grammar/parser.js
 src/grammar/parser.terms.js
 
 /.nyc_output
+.DS_Store

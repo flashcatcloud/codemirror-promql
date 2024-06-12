@@ -22,7 +22,7 @@ export interface MetricMetadata {
 }
 
 export interface PrometheusClient {
-  labelNames(metricName?: string): Promise<string[]>;
+  labelNames(metricName?: string, matchers?: Matcher[]): Promise<string[]>;
 
   // labelValues return a list of the value associated to the given labelName.
   // In case a metric is provided, then the list of values is then associated to the couple <MetricName, LabelName>
@@ -100,7 +100,7 @@ export class HTTPPrometheusClient implements PrometheusClient {
     }
   }
 
-  labelNames(metricName?: string): Promise<string[]> {
+  labelNames(metricName?: string, matchers?: Matcher[]): Promise<string[]> {
     const end = new Date();
     const start = new Date(end.getTime() - this.lookbackInterval);
     if (metricName === undefined || metricName === '') {
@@ -123,7 +123,7 @@ export class HTTPPrometheusClient implements PrometheusClient {
       });
     }
 
-    return this.series(metricName).then((series) => {
+    return this.series(metricName, matchers).then((series) => {
       const labelNames = new Set<string>();
       for (const labelSet of series) {
         for (const [key] of Object.entries(labelSet)) {
@@ -308,12 +308,16 @@ class Cache {
     this.labelNames = labelNames;
   }
 
-  getLabelNames(metricName?: string): string[] {
+  getLabelNames(metricName?: string, matchers?: Matcher[]): string[] {
     if (!metricName || metricName.length === 0) {
       return this.labelNames;
     }
     const labelSet = this.completeAssociation.get(metricName);
-    return labelSet ? Array.from(labelSet.keys()) : [];
+    const labelNames = labelSet ? Array.from(labelSet.keys()) : [];
+    if (matchers && matchers.length > 0) {
+      return labelNames.filter((label) => !matchers.some((matcher) => matcher.name === label));
+    }
+    return labelNames;
   }
 
   setLabelValues(labelName: string, labelValues: string[]): void {
@@ -344,8 +348,8 @@ export class CachedPrometheusClient implements PrometheusClient {
     this.cache = new Cache(config);
   }
 
-  labelNames(metricName?: string): Promise<string[]> {
-    const cachedLabel = this.cache.getLabelNames(metricName);
+  labelNames(metricName?: string, matchers?: Matcher[]): Promise<string[]> {
+    const cachedLabel = this.cache.getLabelNames(metricName, matchers);
     if (cachedLabel && cachedLabel.length > 0) {
       return Promise.resolve(cachedLabel);
     }
@@ -356,25 +360,25 @@ export class CachedPrometheusClient implements PrometheusClient {
         return labelNames;
       });
     }
-    return this.series(metricName).then(() => {
-      return this.cache.getLabelNames(metricName);
+    return this.series(metricName, matchers).then(() => {
+      return this.cache.getLabelNames(metricName, matchers);
     });
   }
 
-  labelValues(labelName: string, metricName?: string): Promise<string[]> {
+  labelValues(labelName: string, metricName?: string, matchers?: Matcher[]): Promise<string[]> {
     const cachedLabel = this.cache.getLabelValues(labelName, metricName);
     if (cachedLabel && cachedLabel.length > 0) {
       return Promise.resolve(cachedLabel);
     }
 
     if (metricName === undefined || metricName === '') {
-      return this.client.labelValues(labelName).then((labelValues) => {
+      return this.client.labelValues(labelName, metricName, matchers).then((labelValues) => {
         this.cache.setLabelValues(labelName, labelValues);
         return labelValues;
       });
     }
 
-    return this.series(metricName).then(() => {
+    return this.series(metricName, matchers, labelName).then(() => {
       return this.cache.getLabelValues(labelName, metricName);
     });
   }
@@ -391,8 +395,8 @@ export class CachedPrometheusClient implements PrometheusClient {
     });
   }
 
-  series(metricName: string): Promise<Map<string, string>[]> {
-    return this.client.series(metricName).then((series) => {
+  series(metricName: string, matchers?: Matcher[], labelName?: string): Promise<Map<string, string>[]> {
+    return this.client.series(metricName, matchers, labelName).then((series) => {
       this.cache.setAssociations(metricName, series);
       return series;
     });

@@ -257,13 +257,13 @@ describe('analyzeCompletion test', () => {
       title: 'autocomplete labelName associated to a metric',
       expr: 'metric_name{}',
       pos: 12, // cursor is between the bracket
-      expectedContext: [{ kind: ContextKind.LabelName, metricName: 'metric_name' }],
+      expectedContext: [{ kind: ContextKind.LabelName, metricName: 'metric_name', matchers: [] }],
     },
     {
       title: 'autocomplete labelName that defined a metric',
       expr: '{}',
       pos: 1, // cursor is between the bracket
-      expectedContext: [{ kind: ContextKind.LabelName, metricName: '' }],
+      expectedContext: [{ kind: ContextKind.LabelName, metricName: '', matchers: [] }],
     },
     {
       title: 'continue to autocomplete labelName associated to a metric',
@@ -275,7 +275,7 @@ describe('analyzeCompletion test', () => {
       title: 'continue to autocomplete labelName associated to a metric 2',
       expr: 'metric_name{myLabel="labelValue",}',
       pos: 33, // cursor is between the bracket after the comma
-      expectedContext: [{ kind: ContextKind.LabelName, metricName: 'metric_name' }],
+      expectedContext: [{ kind: ContextKind.LabelName, metricName: 'metric_name', matchers: [{ name: 'myLabel', type: 140, value: 'labelValue' }] }],
     },
     {
       title: 'continue autocomplete labelName that defined a metric',
@@ -287,7 +287,7 @@ describe('analyzeCompletion test', () => {
       title: 'continue autocomplete labelName that defined a metric 2',
       expr: '{myLabel="labelValue",}',
       pos: 22, // cursor is between the bracket after the comma
-      expectedContext: [{ kind: ContextKind.LabelName, metricName: '' }],
+      expectedContext: [{ kind: ContextKind.LabelName, metricName: '', matchers: [{ name: 'myLabel', type: 140, value: 'labelValue' }] }],
     },
     {
       title: 'autocomplete the labelValue with metricName + labelName',

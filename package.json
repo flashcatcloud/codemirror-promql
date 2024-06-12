@@ -10,6 +10,7 @@
     "build:lib": "bash ./build.sh",
     "test": "npm run build:grammar && ts-mocha -p tsconfig.json src/**/*.test.ts",
     "specifyTest": "npm run build:grammar && ts-mocha -p tsconfig.json src/test/specify.test.ts",
+    "specifyTest2": "npm run build:grammar && ts-mocha -p tsconfig.json src/test/specify2.test.ts",
     "test:coverage": "npm run build:grammar && nyc ts-mocha -p tsconfig.json src/**/*.test.ts",
     "codecov": "nyc report --reporter=text-lcov > coverage.lcov && codecov",
     "lint": "eslint src/ --ext .ts",
