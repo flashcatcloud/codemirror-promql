@@ -104,14 +104,14 @@ export class HTTPPrometheusClient implements PrometheusClient {
     const end = new Date();
     const start = new Date(end.getTime() - this.lookbackInterval);
     if (metricName === undefined || metricName === '') {
-      const request = this.buildRequest(
-        this.labelsEndpoint(),
-        new URLSearchParams({
-          start: start.toISOString(),
-          end: end.toISOString(),
-          'match[]': labelMatchersToString('', matchers),
-        })
-      );
+      const paramsInit: any = {
+        start: start.toISOString(),
+        end: end.toISOString(),
+      };
+      if (matchers && matchers.length > 0) {
+        paramsInit['match[]'] = labelMatchersToString('', matchers);
+      }
+      const request = this.buildRequest(this.labelsEndpoint(), new URLSearchParams(paramsInit));
       // See https://prometheus.io/docs/prometheus/latest/querying/api/#getting-label-names
       return this.fetchAPI<string[]>(request.uri, {
         method: this.httpMethod,
@@ -145,11 +145,14 @@ export class HTTPPrometheusClient implements PrometheusClient {
     const start = new Date(end.getTime() - this.lookbackInterval);
 
     if (!metricName || metricName.length === 0) {
-      const params: URLSearchParams = new URLSearchParams({
+      const paramsInit: any = {
         start: start.toISOString(),
         end: end.toISOString(),
-        'match[]': labelMatchersToString('', matchers, labelName),
-      });
+      };
+      if (matchers && matchers.length > 0) {
+        paramsInit['match[]'] = labelMatchersToString('', matchers, labelName);
+      }
+      const params: URLSearchParams = new URLSearchParams(paramsInit);
       // See https://prometheus.io/docs/prometheus/latest/querying/api/#querying-label-values
       return this.fetchAPI<string[]>(`${this.labelValuesEndpoint().replace(/:name/gi, labelName)}?${params}`).catch((error) => {
         if (this.errorHandler) {
