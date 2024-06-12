@@ -109,6 +109,7 @@ export class HTTPPrometheusClient implements PrometheusClient {
         new URLSearchParams({
           start: start.toISOString(),
           end: end.toISOString(),
+          'match[]': labelMatchersToString('', matchers),
         })
       );
       // See https://prometheus.io/docs/prometheus/latest/querying/api/#getting-label-names
@@ -147,6 +148,7 @@ export class HTTPPrometheusClient implements PrometheusClient {
       const params: URLSearchParams = new URLSearchParams({
         start: start.toISOString(),
         end: end.toISOString(),
+        'match[]': labelMatchersToString('', matchers, labelName),
       });
       // See https://prometheus.io/docs/prometheus/latest/querying/api/#querying-label-values
       return this.fetchAPI<string[]>(`${this.labelValuesEndpoint().replace(/:name/gi, labelName)}?${params}`).catch((error) => {
@@ -355,7 +357,7 @@ export class CachedPrometheusClient implements PrometheusClient {
     }
 
     if (metricName === undefined || metricName === '') {
-      return this.client.labelNames().then((labelNames) => {
+      return this.client.labelNames(metricName, matchers).then((labelNames) => {
         this.cache.setLabelNames(labelNames);
         return labelNames;
       });
